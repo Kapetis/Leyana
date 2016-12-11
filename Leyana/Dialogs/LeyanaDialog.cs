@@ -42,6 +42,8 @@ namespace Leyana.Dialogs
         public async Task Saluer(IDialogContext context, LuisResult result)
         {
             String userName = activity.From.Name;
+            String[] tmp = userName.Split(' ');
+            userName = tmp[0];
             string message = $"Bonjour {userName} :)";
             //string message = $"Bonjour :)";
 
