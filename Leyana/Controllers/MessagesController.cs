@@ -20,62 +20,7 @@ namespace Leyana
         /// POST: api/Messages
         /// Receive a message from a user and reply to it
         /// </summary>
-
-        #region Leyana no brain
-        /*
-    public async Task<HttpResponseMessage> Post([FromBody]Activity activity)
-    {
-        if (activity.Type == ActivityTypes.Message)
-        {
-            ConnectorClient connector = new ConnectorClient(new Uri(activity.ServiceUrl));
-
-            String convName = activity.Conversation.Name;
-            String userName = activity.From.Name;
-            String[] tmp = userName.Split(' ');
-            String reply;
-
-
-
-
-            if(userName == "Symphonie Van Kerckhoven" || userName == "Kevin Marra")
-            {
-                if (userName == "Symphonie")
-                {
-                    userName = "Maman <3";
-                }
-                else if (userName == "Kevin")
-                {
-                    userName = "Papa <3";
-                }
-
-                reply = $"Bonjour {userName}, je m'appelle Leyana :)";
-            }
-            else
-            {
-                userName = tmp[0];
-
-                reply = $"Bonjour {userName}. Désolé mais Maman m'a dit de ne pas parler aux inconnues :o";
-
-            }
-
-
-
-            // return our reply to the user
-            Activity replyActivity = activity.CreateReply(reply);
-            await connector.Conversations.ReplyToActivityAsync(replyActivity);
-
-        }
-        else
-        {
-            HandleSystemMessage(activity);
-        }
-        var response = Request.CreateResponse(HttpStatusCode.OK);
-        return response;
-    }
-    */
-        #endregion
-
-        #region LUIS
+        /// 
         [ResponseType(typeof(void))]
         public virtual async Task<HttpResponseMessage> Post([FromBody] Activity activity)
         {
@@ -91,9 +36,6 @@ namespace Leyana
 
             return new HttpResponseMessage(System.Net.HttpStatusCode.Accepted);
         }
-
-
-        #endregion
 
         private Message HandleSystemMessage(Activity message)
         {
