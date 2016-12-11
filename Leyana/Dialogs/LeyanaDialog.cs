@@ -3,10 +3,7 @@ using Microsoft.Bot.Builder.Luis;
 using Microsoft.Bot.Builder.Luis.Models;
 using Microsoft.Bot.Connector;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
 
 namespace Leyana.Dialogs
 {
@@ -14,6 +11,21 @@ namespace Leyana.Dialogs
     [Serializable]
     public class LeyanaDialog : LuisDialog<Object>
     {
+        private struct LyanaInfos
+        {
+            public const String prenom = "Leyana";
+            public const String dateNaissance = "10 Décembre 2016";
+            public const String auteur = "Kevin Marra";
+            public const String couleur = "vert";
+        };
+
+        #region Entities
+
+        private const String EntitiesInfosBot = "InfosBot";
+        private const String EntitiesSalutations = "Salutations";
+
+        #endregion
+
         private Activity activity;
 
         public LeyanaDialog(Activity activity)
@@ -24,8 +36,7 @@ namespace Leyana.Dialogs
         [LuisIntent("")]
         public async Task None(IDialogContext context, LuisResult result)
         {
-            string message = $"Désolé je ne comprends pas :( : "
-                + string.Join(", ", result.Intents.Select(i => i.Intent));
+            string message = $"Désolé je ne comprends pas :( ";
             await context.PostAsync(message);
             context.Wait(MessageReceived);
         }
@@ -33,9 +44,34 @@ namespace Leyana.Dialogs
         [LuisIntent("ConnaitreBot")]
         public async Task ConnaitreBot(IDialogContext context, LuisResult result)
         {
-            string message = $"C'est privé ;)";
-            await context.PostAsync(message);
-            context.Wait(MessageReceived);
+            EntityRecommendation InfosEntityRecommendation;
+
+            var resultMessage = context.MakeMessage();
+            bool foundEntity = result.TryFindEntity(EntitiesInfosBot, out InfosEntityRecommendation);
+
+            if (foundEntity)
+            {
+                switch (InfosEntityRecommendation.Entity)
+                {
+                    case "naissance":   resultMessage.Text = $"Je suis née le {LyanaInfos.dateNaissance}."; break;
+                    case "née":         resultMessage.Text = $"Je suis née le {LyanaInfos.dateNaissance}."; break;
+
+                    case "couleur":     resultMessage.Text = $"Ma couleur préférée est le {LyanaInfos.couleur}."; break;
+
+                    case "créé":        resultMessage.Text = $"J'ai été créé par {LyanaInfos.auteur}."; break;
+                    case "auteur":      resultMessage.Text = $"J'ai été créé par {LyanaInfos.auteur}."; break;
+                    case "papa":        resultMessage.Text = $"Mon papa est {LyanaInfos.auteur}."; break;
+
+                    default:            resultMessage.Text = $"C'est privé ;)"; break;
+                }
+            }
+            else
+            {
+                resultMessage.Text = $"J'ai compris que tu voulais mieux me connaitre mais peux-tu reformuler ta question ?";
+            }
+            await context.PostAsync(resultMessage);
+
+            context.Wait(this.MessageReceived);
         }
 
         [LuisIntent("Saluer")]
@@ -45,7 +81,6 @@ namespace Leyana.Dialogs
             String[] tmp = userName.Split(' ');
             userName = tmp[0];
             string message = $"Bonjour {userName} :)";
-            //string message = $"Bonjour :)";
 
             await context.PostAsync(message);
             context.Wait(MessageReceived);
