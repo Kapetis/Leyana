@@ -10,6 +10,7 @@ using System.Web;
 
 namespace Leyana.Dialogs
 {
+    [LuisModel("d354aafd-1845-4098-ae55-90a1598f2a4e", "a95427f4a88b4f968bf0914f446e1e18")]
     [Serializable]
     public class LeyanaDialog : LuisDialog<Object>
     {
