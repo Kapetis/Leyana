@@ -23,6 +23,8 @@ namespace Leyana.Dialogs
 
         private const String EntitiesInfosBot = "InfosBot";
         private const String EntitiesSalutations = "Salutations";
+        private const String EntitiesCinema = "Cinema";
+
 
         #endregion
 
@@ -88,6 +90,67 @@ namespace Leyana.Dialogs
 
             await context.PostAsync(message);
             context.Wait(MessageReceived);
+        }
+
+        [LuisIntent("SavoirFilmAffiche")]
+        public async Task SavoirFilmAffiche(IDialogContext context, LuisResult result)
+        {
+            EntityRecommendation InfosEntityRecommendation;
+
+            var resultMessage = context.MakeMessage();
+            bool foundEntity = result.TryFindEntity(EntitiesCinema, out InfosEntityRecommendation);
+
+            if (foundEntity)
+            {
+                InfosFilm infos = new InfosFilm();
+                int cpt = 0;
+
+                try
+                {
+
+                    switch (InfosEntityRecommendation.Entity)
+                    {
+                        case "film":
+                            infos = new InfosFilm();
+                            resultMessage.Text = $"Voici le top des films à l'affiche :";
+                            await context.PostAsync(resultMessage);
+                            foreach (var film in await infos.FilmsALAffiche())
+                            {
+                                cpt++;
+                                resultMessage.Text = cpt + ") " + film;
+                                await context.PostAsync(resultMessage);
+
+                            }
+
+                            break;
+                        case "top":
+                            infos = new InfosFilm();
+                            resultMessage.Text = $"Voici le top des films à l'affiche :";
+                            await context.PostAsync(resultMessage);
+                            foreach (var film in await infos.FilmsALAffiche())
+                            {
+                                cpt++;
+                                resultMessage.Text = cpt + ") " + film;
+                                await context.PostAsync(resultMessage);
+                            }
+
+                            break;
+
+                        default: resultMessage.Text = $"Je n'ai pas d'information à propos de ça :/"; break;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    resultMessage.Text = ex.Message;
+                }
+            }
+            else
+            {
+                resultMessage.Text = $"J'ai compris que tu voulais des informations à propos de films mais peux-tu reformuler ta question ?";
+            }
+            //await context.PostAsync(resultMessage);
+
+            context.Wait(this.MessageReceived);
         }
     }
 }
