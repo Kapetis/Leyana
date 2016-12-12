@@ -62,6 +62,10 @@ namespace Leyana.Dialogs
                     case "auteur":      resultMessage.Text = $"J'ai été créé par {LyanaInfos.auteur}."; break;
                     case "papa":        resultMessage.Text = $"Mon papa est {LyanaInfos.auteur}."; break;
 
+                    case "nom":         resultMessage.Text = $"Je m'appelle {LyanaInfos.prenom}."; break;
+                    case "prénom":      resultMessage.Text = $"Je m'appelle {LyanaInfos.prenom}."; break;
+                    case "appelles":    resultMessage.Text = $"Je m'appelle {LyanaInfos.prenom}."; break;
+
                     default:            resultMessage.Text = $"C'est privé ;)"; break;
                 }
             }
